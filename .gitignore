@@ -4,3 +4,4 @@ android/.idea/**/*.*
 android/build/
 android/app/build/
 node_modules/
+Pods/

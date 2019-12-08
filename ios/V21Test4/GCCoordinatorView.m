@@ -72,8 +72,8 @@
   if(_rctScrollView == nil) {
     _rctScrollView = [self findRCTScrollView: self];
     if(_rctScrollView!=nil) {
-      if(_rctScrollView.gcDelegate == nil) {
-        _rctScrollView.gcDelegate = self;
+      if(_rctScrollView.scrollView.delegate != self) {
+        _rctScrollView.scrollView.delegate = self;
         [self handleScroll: self.rctScrollView.scrollView isForce:FALSE];
       }
     }
@@ -137,10 +137,6 @@
     GCNotifyView* notifyView = matchedNotifyViews[index];
     [notifyView emptyBind];
   }
-}
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-  [self handleScroll: scrollView isForce:FALSE];
 }
 
 -(void) handleScroll:(UIScrollView *)scrollView isForce:(BOOL) isForce {
@@ -209,5 +205,98 @@
   }
   [self.notifyViews addPointer:(__bridge void*)(notifyView)];
   //[self.notifyViews addObject:notifyView];
+}
+
+
+
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    [self handleScroll: scrollView isForce:FALSE];
+    if(self.rctScrollView!=nil) {
+      [self.rctScrollView scrollViewDidScroll:scrollView];
+    }
+}
+- (void)scrollViewDidZoom:(UIScrollView *)scrollView API_AVAILABLE(ios(3.2)) {
+    if(self.rctScrollView!=nil && [self.rctScrollView respondsToSelector:@selector(scrollViewDidZoom:)]) {
+      [self.rctScrollView scrollViewDidZoom:scrollView];
+    }
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    if(self.rctScrollView!=nil && [self.rctScrollView respondsToSelector:@selector(scrollViewWillBeginDragging:)]) {
+      [self.rctScrollView scrollViewWillBeginDragging:scrollView];
+    }
+}
+// called on finger up if the user dragged. velocity is in points/millisecond. targetContentOffset may be changed to adjust where the scroll view comes to rest
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset API_AVAILABLE(ios(5.0)) {
+    if(self.rctScrollView!=nil
+       && [self.rctScrollView respondsToSelector:@selector(scrollViewWillEndDragging:withVelocity: targetContentOffset:)]) {
+      [self.rctScrollView scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
+    }
+}
+// called on finger up if the user dragged. decelerate is true if it will continue moving afterwards
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    if(self.rctScrollView!=nil
+       && [self.rctScrollView respondsToSelector:@selector(scrollViewDidEndDragging:willDecelerate:)]) {
+      [self.rctScrollView scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+    }
+}
+
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView {
+    if(self.rctScrollView!=nil && [self.rctScrollView respondsToSelector:@selector(scrollViewWillBeginDecelerating:)]) {
+      [self.rctScrollView scrollViewWillBeginDecelerating:scrollView];
+    }
+}
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView {
+    if(self.rctScrollView!=nil && [self.rctScrollView respondsToSelector:@selector(scrollViewDidEndDecelerating:)]) {
+      [self.rctScrollView scrollViewDidEndDecelerating:scrollView];
+    }
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView{
+  if(self.rctScrollView!=nil && [self.rctScrollView respondsToSelector:@selector(scrollViewDidEndScrollingAnimation:)]) {
+    [self.rctScrollView scrollViewDidEndScrollingAnimation:scrollView];
+  }
+}
+
+- (nullable UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView{
+  if(self.rctScrollView!=nil && [self.rctScrollView respondsToSelector:@selector(viewForZoomingInScrollView:)]) {
+    return [self.rctScrollView viewForZoomingInScrollView:scrollView];
+  }
+  
+  return nil;
+}
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view API_AVAILABLE(ios(3.2)){
+  if(self.rctScrollView!=nil
+     && [self.rctScrollView respondsToSelector:@selector(scrollViewWillBeginZooming:withView:)]) {
+    [self.rctScrollView scrollViewWillBeginZooming:scrollView withView:view];
+  }
+}
+- (void)scrollViewDidEndZooming:(UIScrollView *)scrollView withView:(nullable UIView *)view atScale:(CGFloat)scale{
+  if(self.rctScrollView!=nil
+     && [self.rctScrollView respondsToSelector:@selector(scrollViewDidEndZooming:withView:atScale:)]) {
+    [self.rctScrollView scrollViewDidEndZooming:scrollView withView:view atScale:scale];
+  }
+}
+
+- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView{
+  if(self.rctScrollView!=nil && [self.rctScrollView respondsToSelector:@selector(scrollViewShouldScrollToTop:)]) {
+    return [self.rctScrollView scrollViewShouldScrollToTop:scrollView];
+  }
+  
+  return NO;
+}
+- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView{
+  if(self.rctScrollView!=nil && [self.rctScrollView respondsToSelector:@selector(scrollViewDidScrollToTop:)]) {
+    [self.rctScrollView scrollViewDidScrollToTop:scrollView];
+  }
+}
+
+/* Also see -[UIScrollView adjustedContentInsetDidChange]
+ */
+- (void)scrollViewDidChangeAdjustedContentInset:(UIScrollView *)scrollView API_AVAILABLE(ios(11.0), tvos(11.0)){
+    if(self.rctScrollView!=nil && [self.rctScrollView respondsToSelector:@selector(scrollViewDidChangeAdjustedContentInset:)]) {
+      [self.rctScrollView scrollViewDidChangeAdjustedContentInset:scrollView];
+    }
 }
 @end

@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <React/RCTComponent.h>
 #import <React/RCTScrollView.h>
 #import "GCNotifyVisiableModel.h"
 #import "GCViewManager.h"
